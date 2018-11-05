@@ -1,0 +1,18 @@
+#! /bin/bash
+#Scripted by zzz
+
+	cd "$(dirname "$0")"
+
+#remove previous aria2 startups
+	launchctl remove aria2
+#kill running aria2c
+	sudo killall aria2c
+	
+#copy aria2c (128 threads) to /usr/local/bin and make it executable
+	sudo rm /usr/local/bin/aria2c
+	rm -r ~/.aria2/
+	sudo rm ~/Library/LaunchAgents/com.aria2.plist
+	echo 卸载完成
+
+exit
+

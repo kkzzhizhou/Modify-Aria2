@@ -1,0 +1,39 @@
+#! /bin/bash
+#Scripted by zzz
+
+	cd "$(dirname "$0")"
+
+#kill running aria2c
+	echo 关闭相关进程
+	sudo killall aria2c
+	sudo rm /usr/local/bin/aria2c
+
+#remove previous aria2 startups
+	echo 删除旧启动项
+	launchctl remove aria2
+	launchctl unload ~/Library/LaunchAgents/com.aria2.plist
+
+#copy aria2c (128 threads) to /usr/local/bin and make it executable
+	echo 正在安装aria2
+	sudo cp aria2c /usr/local/bin/
+	chmod +x /usr/local/bin/aria2c
+
+#aria2 initialization
+	echo 正在配置aria2
+	mkdir ~/.aria2/
+	cp aria2.conf ~/.aria2/
+	touch ~/.aria2/aria2.session
+	touch ~/.aria2/aria2.log
+	sudo sed -i '' -e 's/username/'$USER'/' ~/.aria2/aria2.conf
+
+#import aria2 startup
+	echo 设置开机启动Aria2
+	cp com.aria2.plist ~/Library/LaunchAgents/
+	launchctl load ~/Library/LaunchAgents/com.aria2.plist
+	sed -i '' -e 's/username/'$USER'/' ~/Library/LaunchAgents/com.aria2.plist
+	chmod 644 ~/Library/LaunchAgents/com.aria2.plist
+
+#run aria2c in daemon mode
+	echo 正在启动Aria2
+	aria2c --conf-path=/Users/$USER/.aria2/aria2.conf -D
+	exit
